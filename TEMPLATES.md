@@ -3,6 +3,10 @@
 本目录存放四类报告，全部基于本机自托管 World Monitor（`http://192.168.110.184:27182`）的真实快照。
 **报告类型分开放，互不混写。**
 
+本目录同时是一个 git 仓库，远端 https://github.com/Jnternet/world_monitor_reports
+（public，含全部报告与 raw 原始快照）。推送脚本 `/home/bo/.local/bin/wm-reports-push`，
+凭据在 `~/.config/hermes-git/worldmonitor-reports.token`（600，不进仓库）。
+
 ```
 ~/reports/worldmonitor/
 ├── TEMPLATES.md          本文件：结构与口径
@@ -29,6 +33,10 @@
 6. 结尾附「方法与可复现」：端点表 + 快照路径 + 口径说明。
 7. 文件写完更新 `INDEX.md`（日期、类型、路径、一句话结论、数据完整度）。
 8. 聊天里只回：一句话判断 + 3–5 条主线摘要 + 文件路径；长内容进文件。
+9. **写完后推送归档**：报告与 `INDEX.md` 改完立刻跑一次 `/home/bo/.local/bin/wm-reports-push`（`-v` 看详情）。
+   它把整个目录（四类报告 + `raw/<date>/` 原始快照 + `series.csv`）提交并推送到
+   https://github.com/Jnternet/world_monitor_reports 。推送失败不影响报告本身，报告里也不必写推送结果；
+   兜底定时器 `wm-reports-push.timer` 每 15 分钟会重试，`wm-fetch` 取数后也会自动推送一次。
 
 ---
 
