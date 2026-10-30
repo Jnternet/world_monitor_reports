@@ -1,27 +1,32 @@
-# world_monitor_reports
+# 世界监控报告库（world_monitor_reports）
 
-本仓库由本机自托管 [World Monitor](https://github.com/koala73/worldmonitor) 实例（`http://192.168.110.184:27182`）的定时任务自动生成并推送，**内容为机器产出，未经人工编辑**。
+本仓库的内容由本机自建的 [World Monitor](https://github.com/koala73/worldmonitor) 实例（`http://192.168.110.184:27182`）按时段自动生成并推送，**全部为程序产出，未经人工编辑**。
 
-## 结构
+除产品名、接口路径、字段名、代码标识、机构与公司名、股票代码等专有名词外，说明文档与报告正文一律使用中文。
+
+## 目录结构
 
 ```
-INDEX.md              所有报告的索引（日期 / 类型 / 路径 / 一句话结论 / 数据完整度）
-TEMPLATES.md          报告结构、写作口径与分层规格
-daily/YYYY-MM-DD.md   日报（每日 07:30 CST）
-weekly/YYYY-Www.md    周报（每周日 09:00 CST，ISO 周）
-monthly/YYYY-MM.md    月报（当月最后一天 21:00 CST）
-yearly/YYYY.md        年报（12-31 21:00 CST）
-raw/YYYY-MM-DD/       当日原始 API 快照（news/market/risk/natural/health .json）
-raw/series.csv        每日关键指标累积序列（行情、新闻条数、数据源健康度、CII）
+INDEX.md               所有报告的索引（日期 / 类型 / 路径 / 一句话结论 / 数据完整度）
+TEMPLATES.md           报告结构、写作口径与分层规格
+README.md              本说明
+daily/YYYY-MM-DD.md    日报（每天 07:30 生成）
+weekly/YYYY-Www.md     周报（每周日 09:00 生成，按 ISO 周编号）
+monthly/YYYY-MM.md     月报（当月最后一天 21:00 生成）
+yearly/YYYY.md         年报（12 月 31 日 21:00 生成）
+raw/YYYY-MM-DD/        当日原始快照：新闻、行情、国家风险、自然事件、数据源健康，共五个 JSON 文件
+raw/series.csv         每日关键指标的累积序列（行情、新闻条数、数据源健康度、国家风险指数）
 ```
 
 ## 阅读须知
 
-- 新闻 digest 有约 96 小时窗口与每类 ≤20 条的上限，单份报告只代表取数那一刻的切片。
-- `importanceScore` 是关键词 + 来源权重打分，不是模型研判。
-- CII（国家风险综合指数）在动态分量缺数据时 `degraded=true`、`dynamicScore=0`，此时只能作静态基线，不能用于排名或趋势结论。
-- 无 API key 的数据源（ACLED / UCDP / 预测市场等）返回空数组而不是报错——空 ≠ 无事件。
+- 新闻摘要接口只有约 96 小时的取数窗口，且每个类目最多 20 条，单份报告只代表取数那一刻的切片，不是完整档案。
+- 新闻重要度评分（`importanceScore`）来自关键词与来源权重，属于机械打分，不是模型研判，也不构成投资建议。
+- 国家风险综合指数（CII）在动态分量缺数据时 `degraded=true`、`dynamicScore` 全为 0，此时只能当作静态基线，不能用于国家排名或“上升/下降”的结论。
+- 未配置接口凭据的数据源（ACLED、UCDP、预测市场等）返回空数组而不是报错，**空数组不等于“没有事件”**。
+- 原始快照原样保存接口返回内容，字段含义以 World Monitor 上游定义为准。
 
-## 推送机制
+## 更新机制
 
-`wm-fetch` 取数后自动提交推送；兜底定时器每 15 分钟推送一次；凭据不进仓库。
+取数脚本每完成一次快照即自动提交并推送；另有每 15 分钟一次的兜底推送，用于补齐新写入的报告与索引。
+推送凭据不存放在本仓库内。
